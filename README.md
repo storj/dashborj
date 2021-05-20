@@ -19,7 +19,7 @@ Usage
 Design
 ------
 
-Mostly it just resolves host names and SSH'es into boxes for you.  ¯\\_(ツ)_/¯
+Mostly it just resolves host names and SSH'es into boxes for you.  ¯\\\_(ツ)\_/¯
 
 Pretty much everything of value here is copped from https://github.com/digineo/http-over-ssh/.
 
