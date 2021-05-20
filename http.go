@@ -12,8 +12,6 @@ import (
 	"strings"
 )
 
-const defaultPort = 22
-
 func (proxy *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
@@ -47,19 +45,23 @@ func (proxy *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func parseRequest(r *http.Request) (*clientKey, string, error) {
-	parts := strings.SplitN(r.RequestURI, "/", 5)
-	if len(parts) != 5 { // the initial slash makes parts[0] empty
+	parts := strings.SplitN(r.RequestURI, "/", 6)
+	if len(parts) != 6 { // the initial slash makes parts[0] empty
 		return nil, "", errors.New("bad request URI " + r.RequestURI)
 	}
 	sysIndex, err := strconv.Atoi(parts[2])
 	if err != nil || sysIndex < 0 || sysIndex >= len(systems) {
-		return nil, "", errors.New("bad request URI " + r.RequestURI)
+		return nil, "", errors.New("bad request URI sysIndex " + r.RequestURI)
 	}
 	ipIndex, err := strconv.Atoi(parts[3])
 	if err != nil || ipIndex < 0 || ipIndex >= len(systems[sysIndex].IPs) {
-		return nil, "", errors.New("bad request URI " + r.RequestURI)
+		return nil, "", errors.New("bad request URI ipIndex " + r.RequestURI)
 	}
-	path := parts[4]
+	port, err := strconv.Atoi(parts[4])
+	if err != nil {
+		return nil, "", errors.New("bad request URI port " + r.RequestURI)
+	}
+	path := parts[5]
 
 	key := clientKey{
 		// host:     systems[hostIndex].IPs[ipIndex],
@@ -70,7 +72,7 @@ func parseRequest(r *http.Request) (*clientKey, string, error) {
 	}
 
 	// todo: extract scheme from URL
-	return &key, fmt.Sprintf("%s://%s/%s", "http", systems[sysIndex].Host, path), nil
+	return &key, fmt.Sprintf("%s://%s:%d/%s", "http", "127.0.0.1", port, path), nil
 }
 
 // Hop-by-hop headers. These are removed when sent to the backend.

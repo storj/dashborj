@@ -35,23 +35,23 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 
 func writeAuthResponse(w http.ResponseWriter, sys System, sysNum int) {
 	for i, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/%d/debug/pprof/">pprof %s</a></p>`, sysNum, i, AuthDebugPort, ip)))
 	}
 }
 
 func writeGatewayResponse(w http.ResponseWriter, sys System, sysNum int) {
 	for i, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/%d/debug/pprof/">pprof %s</a></p>`, sysNum, i, GateDebugPort, ip)))
 	}
 }
 
 func writeLinkResponse(w http.ResponseWriter, sys System, sysNum int) {
 	for i, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/%d/debug/pprof/">pprof %s</a></p>`, sysNum, i, LinkDebugPort, ip)))
 	}
 }
 func writeSatResponse(w http.ResponseWriter, sys System, sysNum int) {
 	for i, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/%d/debug/pprof/">pprof %s</a></p>`, sysNum, i, SatDebugPort, ip)))
 	}
 }
