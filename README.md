@@ -3,10 +3,18 @@ DashBorj
 
 DashBorj provides a dashboard for internal Storj dev-ops.
 
+Setup
+-----
+
+Things you need:
+A Hetzner token set in your environment as HCLOUD_TOKEN
+~/.ssh private key certificates corresponding to these servers
+~/.ssh known_hosts entries corresponding to these servers
+
 Usage
 -----
 
-`dashborj`
+`dashborj` then open a browser to http://localhost:8090
 
 Design
 ------
