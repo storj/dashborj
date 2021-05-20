@@ -7,14 +7,14 @@ Setup
 -----
 
 Things you need:
-A Hetzner token set in your environment as HCLOUD_TOKEN
-~/.ssh private key certificates corresponding to these servers
-~/.ssh known_hosts entries corresponding to these servers
+ - A Hetzner token set in your environment as HCLOUD_TOKEN
+ - ~/.ssh private key certificates corresponding to these servers
+ - ~/.ssh known_hosts entries corresponding to these servers
 
 Usage
 -----
 
-`dashborj` then open a browser to http://localhost:8090
+`go run .` then open a browser to http://localhost:8090
 
 Design
 ------
