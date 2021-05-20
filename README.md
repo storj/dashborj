@@ -1,6 +1,8 @@
 DashBorj
 ========
 
+![cute gopher logo](./dashborj.png)
+
 DashBorj provides a dashboard for internal Storj dev-ops.
 
 Setup
