@@ -3,8 +3,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -49,46 +47,30 @@ func (proxy *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func parseRequest(r *http.Request) (*clientKey, string, error) {
-	target, err := url.Parse(r.RequestURI[3:])
-	if err != nil {
-		return nil, "", err
+	parts := strings.SplitN(r.RequestURI, "/", 5)
+	if len(parts) != 5 { // the initial slash makes parts[0] empty
+		return nil, "", errors.New("bad request URI " + r.RequestURI)
 	}
-
-	if target.Host == "" {
-		return nil, "", errors.New("host missing in request URI")
+	sysIndex, err := strconv.Atoi(parts[2])
+	if err != nil || sysIndex < 0 || sysIndex >= len(systems) {
+		return nil, "", errors.New("bad request URI " + r.RequestURI)
 	}
-
-	if target.Path == "/" {
-		return nil, "", errors.New("destination host missing in request URI")
+	ipIndex, err := strconv.Atoi(parts[3])
+	if err != nil || ipIndex < 0 || ipIndex >= len(systems[sysIndex].IPs) {
+		return nil, "", errors.New("bad request URI " + r.RequestURI)
 	}
+	path := parts[4]
 
 	key := clientKey{
-		host: target.Hostname(),
+		// host:     systems[hostIndex].IPs[ipIndex],
+		// port:     uint16(systems[hostIndex].SSHPort),
+		// username: systems[hostIndex].SSHUser,
+		SystemIndex: sysIndex,
+		IPIndex:     ipIndex,
 	}
 
-	// Parse port
-	if port := target.Port(); port != "" {
-		ui, err := strconv.ParseUint(port, 10, 16)
-		if err != nil {
-			return nil, "", fmt.Errorf("parsing \"%v\": invalid port number", port)
-		}
-		key.port = uint16(ui)
-	} else {
-		key.port = defaultPort
-	}
-
-	// Parse username
-	if auth := r.Header.Get("Authorization"); strings.HasPrefix(auth, "Basic ") {
-		decoded, _ := base64.StdEncoding.DecodeString(auth[6:])
-		if i := bytes.IndexByte(decoded, ':'); i != -1 {
-			key.username = string(decoded[:i])
-		} else {
-			key.username = string(decoded)
-		}
-
-	}
-
-	return &key, target.Scheme + ":/" + target.RequestURI(), nil
+	// todo: extract scheme from URL
+	return &key, fmt.Sprintf("%s://%s/%s", "http", systems[sysIndex].Host, path), nil
 }
 
 // Hop-by-hop headers. These are removed when sent to the backend.

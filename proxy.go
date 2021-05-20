@@ -13,9 +13,8 @@ import (
 
 // Proxy holds the HTTP client and the SSH connection pool
 type Proxy struct {
-	clients   map[clientKey]*client
-	sshConfig ssh.ClientConfig
-	mtx       sync.Mutex
+	clients map[clientKey]*client
+	mtx     sync.Mutex
 }
 
 // NewProxy creates a new proxy
@@ -38,10 +37,11 @@ func (proxy *Proxy) getClient(key clientKey) *client {
 
 	pClient = &client{
 		key:       key,
-		sshConfig: proxy.sshConfig, // make copy
+		sshConfig: systems[key.SystemIndex].sshConfig, // make copy
 	}
+	sysIndex := key.SystemIndex
 	pClient.sshConfig.HostKeyCallback = func(hostname string, remote net.Addr, key ssh.PublicKey) error {
-		if err := proxy.sshConfig.HostKeyCallback(hostname, remote, key); err != nil {
+		if err := systems[sysIndex].sshConfig.HostKeyCallback(hostname, remote, key); err != nil {
 			return err
 		}
 		if cert, ok := key.(*ssh.Certificate); ok && cert != nil {
@@ -50,9 +50,6 @@ func (proxy *Proxy) getClient(key clientKey) *client {
 		return nil
 	}
 
-	if key.username != "" {
-		pClient.sshConfig.User = key.username
-	}
 	pClient.httpClient = &http.Client{
 		Transport: &http.Transport{
 			Dial: pClient.dial,

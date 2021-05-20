@@ -23,22 +23,26 @@ type client struct {
 
 // clientKey is used for reusing SSH connections
 type clientKey struct {
-	host     string
-	port     uint16
-	username string
+	// host     string
+	// port     uint16
+	// username string
+	IPIndex     int
+	SystemIndex int
 }
 
 // hostPort returns the host joined with the port
 func (key *clientKey) hostPort() string {
-	return net.JoinHostPort(key.host, strconv.Itoa(int(key.port)))
+	//return net.JoinHostPort(key.host, strconv.Itoa(int(key.port)))
+	sys := systems[key.SystemIndex]
+	return net.JoinHostPort(sys.IPs[key.IPIndex], strconv.Itoa(sys.SSHPort))
 }
 
 func (key *clientKey) String() string {
 	hp := key.hostPort()
-	if key.username == "" {
+	if systems[key.SystemIndex].SSHUser == "" {
 		return hp
 	}
-	return fmt.Sprintf("%s@%s", key.username, hp)
+	return fmt.Sprintf("%s@%s", systems[key.SystemIndex].SSHUser, hp)
 }
 
 // establishes the SSH connection and sets up the HTTP client

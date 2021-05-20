@@ -7,41 +7,25 @@ import (
 	"net/http"
 )
 
-const (
-	Satellite   = "satellite"
-	Auth        = "auth"
-	Linksharing = "linksharing"
-	Gateway     = "gateway"
-	DNS         = "dns"
-	Hetzner     = "hetzner"
-)
-
-type System struct {
-	Kind     string
-	Host     string
-	Resolver string
-	IPs      []string
-}
-
 func handleRequest(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(`<html><body>`))
 
 	for _, kind := range []string{Auth, Gateway, Linksharing, Satellite} {
 		w.Write([]byte(fmt.Sprintf(`<h1>%s</h1>`, kind)))
-		for _, sys := range systems {
+		for sysNum, sys := range systems {
 			if sys.Kind != kind {
 				continue
 			}
 			w.Write([]byte(fmt.Sprintf(`<h2><a href="/%s/">%s</a></h2>`, sys.Host, sys.Host)))
 			switch sys.Kind {
 			case Auth:
-				writeAuthResponse(w, sys)
+				writeAuthResponse(w, sys, sysNum)
 			case Gateway:
-				writeGatewayResponse(w, sys)
+				writeGatewayResponse(w, sys, sysNum)
 			case Linksharing:
-				writeLinkResponse(w, sys)
+				writeLinkResponse(w, sys, sysNum)
 			case Satellite:
-				writeSatResponse(w, sys)
+				writeSatResponse(w, sys, sysNum)
 			}
 		}
 	}
@@ -49,25 +33,25 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(`</body></html>`))
 }
 
-func writeAuthResponse(w http.ResponseWriter, sys System) {
-	for _, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%s/">%s</a></p>`, ip, ip)))
+func writeAuthResponse(w http.ResponseWriter, sys System, sysNum int) {
+	for i, ip := range sys.IPs {
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
 	}
 }
 
-func writeGatewayResponse(w http.ResponseWriter, sys System) {
-	for _, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%s/">%s</a></p>`, ip, ip)))
+func writeGatewayResponse(w http.ResponseWriter, sys System, sysNum int) {
+	for i, ip := range sys.IPs {
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
 	}
 }
 
-func writeLinkResponse(w http.ResponseWriter, sys System) {
-	for _, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%s/">%s</a></p>`, ip, ip)))
+func writeLinkResponse(w http.ResponseWriter, sys System, sysNum int) {
+	for i, ip := range sys.IPs {
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
 	}
 }
-func writeSatResponse(w http.ResponseWriter, sys System) {
-	for _, ip := range sys.IPs {
-		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%s/">%s</a></p>`, ip, ip)))
+func writeSatResponse(w http.ResponseWriter, sys System, sysNum int) {
+	for i, ip := range sys.IPs {
+		w.Write([]byte(fmt.Sprintf(`<p><a href="/p/%d/%d/">%s</a></p>`, sysNum, i, ip)))
 	}
 }
