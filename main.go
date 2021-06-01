@@ -21,11 +21,11 @@ var systems = []System{
 	{Kind: Auth, Host: "auth.ap1.storjshare.io"},
 
 	{Kind: Linksharing, Host: "link.us1.storjshare.io"},
-	{Kind: Linksharing, Host: "link.eu1.storjshare.io"},
+	{Kind: Linksharing, Host: "link.eu1.storjshare.io", SSHUser: "ubuntu", SSHPort: 2222},
 	{Kind: Linksharing, Host: "link.ap1.storjshare.io"},
 
 	{Kind: Gateway, Host: "gateway.us1.storjshare.io"},
-	{Kind: Gateway, Host: "gateway.eu1.storjshare.io"},
+	{Kind: Gateway, Host: "gateway.eu1.storjshare.io", SSHUser: "ubuntu", SSHPort: 2222},
 	{Kind: Gateway, Host: "gateway.ap1.storjshare.io"},
 
 	{Kind: Gateway, IPResolver: Hetzner, Host: "gateway.tardigradeshare.io"},
